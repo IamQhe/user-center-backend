@@ -5,11 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 
 /**
  * 用户
- * @TableName user
  */
 @TableName(value ="user")
 @Data
@@ -34,6 +35,17 @@ public class User implements Serializable {
      * 用户密码
      */
     private String userPassword;
+
+    /**
+     * 检验密码
+     */
+    @TableField(exist = false)
+    private String checkPassword;
+
+    /**
+     * 用户头像路径
+     */
+    private String userAvatarUrl;
 
     /**
      * 用户身份
@@ -61,7 +73,17 @@ public class User implements Serializable {
     private String invitationCode;
 
     /**
-     * 
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
+
+    /**
+     * 逻辑删除
      */
     @TableLogic
     private Integer isDelete;
