@@ -1,5 +1,10 @@
 package com.qhe.usercenter.constant;
 
+/**
+ * 用户业务常量
+ *
+ * @author IamQhe
+ */
 public class UserConstants {
     /**
      * 盐值，混淆密码
@@ -39,7 +44,7 @@ public class UserConstants {
     /**
      * 校验规则：用户账号最大长度
      */
-    public static final int CHECK_USER_ACCOUNT_MAX_LENGTH = 32;
+    public static final int CHECK_USER_ACCOUNT_MAX_LENGTH = 16;
 
     /**
      * 校验规则：用户密码最小长度
@@ -49,5 +54,5 @@ public class UserConstants {
     /**
      * 校验规则：用户密码最小长度
      */
-    public static final int CHECK_USER_PASSWORD_MAX_LENGTH = 32;
+    public static final int CHECK_USER_PASSWORD_MAX_LENGTH = 16;
 }

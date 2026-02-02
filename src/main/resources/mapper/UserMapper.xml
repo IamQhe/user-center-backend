@@ -13,6 +13,7 @@
             <result property="userStatus" column="user_status" />
             <result property="userGender" column="user_gender" />
             <result property="userEmail" column="user_email" />
+            <result property="userPhone" column="user_phone" />
             <result property="invitationCode" column="invitation_code" />
             <result property="isDelete" column="is_delete" />
     </resultMap>

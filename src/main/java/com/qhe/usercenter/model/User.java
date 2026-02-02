@@ -11,6 +11,8 @@ import lombok.Data;
 
 /**
  * 用户
+ *
+ * @author IamQhe
  */
 @TableName(value ="user")
 @Data
@@ -66,6 +68,11 @@ public class User implements Serializable {
      * 用户邮箱
      */
     private String userEmail;
+
+    /**
+     * 用户手机号
+     */
+    private String userPhone;
 
     /**
      * 邀请码

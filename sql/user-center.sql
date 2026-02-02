@@ -10,6 +10,7 @@ create table user
     user_status     int      default 1                 not null comment '用户状态 0：禁用；1：启用',
     user_gender     tinyint                            null comment '用户性别',
     user_email      varchar(255)                       null comment '用户邮箱',
+    user_phone      varchar(255)                       null comment '用户手机号',
     invitation_code varchar(255)                       not null comment '邀请码',
     create_time     datetime default CURRENT_TIMESTAMP null comment '创建时间',
     update_time     datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间',

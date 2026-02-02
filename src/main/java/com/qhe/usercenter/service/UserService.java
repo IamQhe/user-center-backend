@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * UserService
+ *
+ * @author IamQhe
  */
 public interface UserService extends IService<User> {
 
@@ -18,9 +20,9 @@ public interface UserService extends IService<User> {
      * @param userPassword 密码
      * @param checkPassword 确认密码
      * @param invitationCode 邀请码
-     * @return
+     * @return 用户id
      */
-    public Long register(String userAccount, String userPassword, String checkPassword, String invitationCode);
+    Long register(String userAccount, String userPassword, String checkPassword, String invitationCode);
 
     /**
      * 用户登录
@@ -28,7 +30,15 @@ public interface UserService extends IService<User> {
      * @param userAccount 账号
      * @param userPassword 密码
      * @param request servlet请求
-     * @return
+     * @return 用户VO
      */
-    public UserVO login(String userAccount, String userPassword, HttpServletRequest request);
+    UserVO login(String userAccount, String userPassword, HttpServletRequest request);
+
+    /**
+     * 获取当前登录用户
+     *
+     * @param request servlet请求
+     * @return 当前用户VO
+     */
+    UserVO currentUser(HttpServletRequest request);
 }

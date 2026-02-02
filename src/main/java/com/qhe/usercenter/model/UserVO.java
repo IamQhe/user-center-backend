@@ -3,6 +3,11 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 用户VO类
+ *
+ * @author IamQhe
+ */
 @Data
 public class UserVO implements Serializable {
     /**
@@ -39,4 +44,9 @@ public class UserVO implements Serializable {
      * 用户邮箱
      */
     private String userEmail;
+
+    /**
+     * 用户手机号
+     */
+    private String userPhone;
 }
