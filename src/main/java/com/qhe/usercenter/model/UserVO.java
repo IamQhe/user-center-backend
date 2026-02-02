@@ -2,6 +2,7 @@ package com.qhe.usercenter.model;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 用户VO类
@@ -36,6 +37,11 @@ public class UserVO implements Serializable {
     private Integer userRole;
 
     /**
+     * 用户状态
+     */
+    private Integer userStatus;
+
+    /**
      * 用户性别
      */
     private Integer userGender;
@@ -49,4 +55,14 @@ public class UserVO implements Serializable {
      * 用户手机号
      */
     private String userPhone;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
 }

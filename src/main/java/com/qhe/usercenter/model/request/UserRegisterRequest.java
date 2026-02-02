@@ -6,10 +6,12 @@ import java.io.Serializable;
 
 /**
  * 用户注册请求
+ *
+ * @author IamQhe
  */
 @Data
 public class UserRegisterRequest implements Serializable {
-    public static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 用户账号

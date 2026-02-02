@@ -7,6 +7,7 @@ import com.qhe.usercenter.common.ResponseUtils;
 import com.qhe.usercenter.constant.UserConstants;
 import com.qhe.usercenter.model.UserVO;
 import com.qhe.usercenter.model.request.UserLoginRequest;
+import com.qhe.usercenter.model.request.UserQueryRequest;
 import com.qhe.usercenter.model.request.UserRegisterRequest;
 import com.qhe.usercenter.service.UserService;
 import com.qhe.usercenter.utils.StringUtils;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 用户接口
@@ -71,5 +73,10 @@ public class UserController {
         }
         UserVO userVO = userService.currentUser(request);
         return ResponseUtils.success(userVO);
+    }
+
+    @PostMapping("/admin/search")
+    public BaseResponse<List<UserVO>> search(@RequestBody(required = false) UserQueryRequest user) {
+        return ResponseUtils.success(userService.search(user));
     }
 }

@@ -7,6 +7,7 @@ import com.qhe.usercenter.Exception.BusinessException;
 import com.qhe.usercenter.constant.UserConstants;
 import com.qhe.usercenter.model.User;
 import com.qhe.usercenter.model.UserVO;
+import com.qhe.usercenter.model.request.UserQueryRequest;
 import com.qhe.usercenter.service.UserService;
 import com.qhe.usercenter.mapper.UserMapper;
 import com.qhe.usercenter.utils.StringUtils;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * UserServiceImpl
@@ -138,6 +140,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Long userId = user.getUserId();
         User currentUser = this.getById(userId);
         return getUserVO(currentUser);
+    }
+
+    @Override
+    public List<UserVO> search(UserQueryRequest user) {
+        return userMapper.searchUserList(user);
     }
 
     // 用户账号校验正则表达式

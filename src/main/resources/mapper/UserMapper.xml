@@ -19,7 +19,24 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        user_id,user_name,user_account,user_password,user_role,user_status,
-        user_gender,user_email,invitation_code,is_delete
+        user_id, user_name, user_account, user_role, user_status, user_gender,
+        user_email, user_phone, create_time, update_time
     </sql>
+
+    <select id="searchUserList" resultType="com.qhe.usercenter.model.UserVO">
+        select <include refid="Base_Column_List"/>
+        from user
+        <where>
+            <if test="userId != null">AND user_id = #{userId}</if>
+            <if test="userName != null and userName != ''">AND user_name like concat('%', #{userName}, '%')</if>
+            <if test="userAccount != null and userAccount != ''">AND user_account like concat('%', #{userAccount}, '%')</if>
+            <if test="userRole != null">AND user_role = #{userRole}</if>
+            <if test="userStatus != null">AND user_status = #{userStatus}</if>
+            <if test="userGender != null">AND user_gender = #{userGender}</if>
+            <if test="userEmail != null and userEmail != ''">AND user_email like concat('%', #{userEmail}, '%')</if>
+            <if test="userPhone != null and userPhone != ''">AND user_phone like concat('%', #{userPhone}, '%')</if>
+            <if test="startCreateTime != null and endCreateTime != null">AND create_time between #{startCreateTime} and #{endCreateTime}</if>
+            <if test="startUpdateTime != null and endUpdateTime != null">AND update_time between #{startUpdateTime} and #{endUpdateTime}</if>
+        </where>
+    </select>
 </mapper>

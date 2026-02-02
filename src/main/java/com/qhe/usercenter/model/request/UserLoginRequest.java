@@ -6,11 +6,13 @@ import java.io.Serializable;
 
 /**
  * 用户登录请求
+ *
+ * @author IamQhe
  */
 @Data
 public class UserLoginRequest implements Serializable {
 
-    public static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private String userAccount;
 

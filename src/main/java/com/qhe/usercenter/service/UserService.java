@@ -3,8 +3,10 @@ package com.qhe.usercenter.service;
 import com.qhe.usercenter.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.qhe.usercenter.model.UserVO;
+import com.qhe.usercenter.model.request.UserQueryRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * UserService
@@ -41,4 +43,12 @@ public interface UserService extends IService<User> {
      * @return 当前用户VO
      */
     UserVO currentUser(HttpServletRequest request);
+
+    /**
+     * 获取用户列表
+     *
+     * @param user 查询参数
+     * @return 用户列表
+     */
+    List<UserVO> search(UserQueryRequest user);
 }
