@@ -7,15 +7,19 @@ import com.qhe.usercenter.Exception.BusinessException;
 import com.qhe.usercenter.constant.UserConstants;
 import com.qhe.usercenter.model.User;
 import com.qhe.usercenter.model.UserVO;
+import com.qhe.usercenter.model.enums.UserStatusEnum;
 import com.qhe.usercenter.model.request.UserQueryRequest;
+import com.qhe.usercenter.model.request.UserUpdateRequest;
 import com.qhe.usercenter.service.UserService;
 import com.qhe.usercenter.mapper.UserMapper;
+import com.qhe.usercenter.utils.ListUtils;
 import com.qhe.usercenter.utils.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * UserServiceImpl
@@ -147,6 +151,104 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return userMapper.searchUserList(user);
     }
 
+    @Override
+    public boolean updateUser(UserUpdateRequest user) {
+        // 参数非空校验
+        if (user == null || user.getUserId() == null) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "用户id不能为空");
+        }
+        if (StringUtils.isBlank(user.getUserAccount())) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "用户账号不能为空");
+        }
+        if (user.getUserRole() == null) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "用户身份不能为空");
+        }
+        if (user.getUserStatus() == null) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "用户状态不能为空");
+        }
+
+        // todo 身份枚举校验
+
+        // 状态枚举校验
+        if (!UserStatusEnum.containsStatus(user.getUserStatus())) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "非法状态参数：" + user.getUserStatus());
+        }
+
+        // todo 性别枚举校验
+
+        // todo 邮箱正则校验
+
+        // todo 手机号正则校验
+
+        // 账号重复校验（除了用户本身）
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ne("user_id", user.getUserId())
+                .eq("user_account", user.getUserAccount());
+        Long count = userMapper.selectCount(queryWrapper);
+        if (count > 0) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR,
+                    "账号已存在，再换一个吧");
+        }
+
+        boolean result = this.updateById(user);
+        if (!result) {
+            throw new BusinessException(BusinessCode.SYSTEM_ERROR, "更新失败，请稍后尝试");
+        }
+        return result;
+    }
+
+    @Override
+    public boolean switchStatus(Long userId, Integer userStatus) {
+        if (userId == null ) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "用户id不能为空");
+        }
+        if (userStatus == null) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_NULL, "用户状态不能为空");
+        }
+
+        // 状态枚举校验
+        if (!UserStatusEnum.containsStatus(userStatus)) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "非法状态参数: " + userStatus);
+        }
+
+        User user = new User();
+        user.setUserId(userId);
+        user.setUserStatus(userStatus);
+        boolean result = this.updateById(user);
+        if (!result) {
+            throw  new BusinessException(BusinessCode.SYSTEM_ERROR, "状态修改失败，请重试");
+        }
+        return result;
+    }
+
+    @Override
+    public boolean batchSwitchStatus(List<Long> userIdList, Integer userStatus) {
+        // 参数非空校验
+        if (ListUtils.isNullOrEmpty(userIdList)) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "用户id列表不能为空");
+        }
+        if (userStatus == null) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "用户状态不能为空");
+        }
+        // 用户列表空值校验
+        if (ListUtils.isNullOrcontainsNull(userIdList)) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "用户id列表不能存在空值");
+        }
+
+        // 更新用户状态
+        List<User> list = userIdList.stream().map(userId -> {
+            User u = new User();
+            u.setUserId(userId);
+            u.setUserStatus(userStatus);
+            return u;
+        }).collect(Collectors.toList());
+        boolean result = this.updateBatchById(list);
+        if (!result) {
+            throw new BusinessException(BusinessCode.SYSTEM_ERROR, "状态批量更新失败，请重试");
+        }
+        return result;
+    }
+
     // 用户账号校验正则表达式
     public boolean validateUserAccount(String account, int min, int max) {
         // 允许数字、字母和下划线
@@ -154,6 +256,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return account.matches(pattern);
     }
 
+    /**
+     * User 转 UserVO
+     *
+     * @param user User
+     * @return UserVO
+     */
     public UserVO getUserVO(User user) {
         UserVO userVO = new UserVO();
         userVO.setUserId(user.getUserId());

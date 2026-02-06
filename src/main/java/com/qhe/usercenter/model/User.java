@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
@@ -21,6 +22,7 @@ public class User implements Serializable {
      * 用户id
      */
     @TableId
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long userId;
 
     /**

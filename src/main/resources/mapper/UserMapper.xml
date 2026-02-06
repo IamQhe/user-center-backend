@@ -11,6 +11,7 @@
             <result property="userPassword" column="user_password" />
             <result property="userRole" column="user_role" />
             <result property="userStatus" column="user_status" />
+            <result property="userAvatarUrl" column="user_avatar_url" />
             <result property="userGender" column="user_gender" />
             <result property="userEmail" column="user_email" />
             <result property="userPhone" column="user_phone" />
@@ -19,7 +20,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        user_id, user_name, user_account, user_role, user_status, user_gender,
+        user_id, user_name, user_account, user_role, user_status, user_gender, user_avatar_url,
         user_email, user_phone, create_time, update_time
     </sql>
 
@@ -27,6 +28,7 @@
         select <include refid="Base_Column_List"/>
         from user
         <where>
+            is_delete = 0
             <if test="userId != null">AND user_id = #{userId}</if>
             <if test="userName != null and userName != ''">AND user_name like concat('%', #{userName}, '%')</if>
             <if test="userAccount != null and userAccount != ''">AND user_account like concat('%', #{userAccount}, '%')</if>
