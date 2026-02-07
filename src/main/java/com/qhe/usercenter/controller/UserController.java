@@ -23,7 +23,6 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = {"http://localhost:8000"}, allowCredentials = "true")
 public class UserController {
 
     @Resource
@@ -62,7 +61,7 @@ public class UserController {
             throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR);
         }
         request.getSession().removeAttribute(UserConstants.USER_LOGIN_STATE);
-        return ResponseUtils.success();
+        return ResponseUtils.success(true);
     }
 
     @PostMapping("/currentUser")
@@ -110,7 +109,7 @@ public class UserController {
         return ResponseUtils.success(true);
     }
 
-    @PostMapping("admin/batchDelete")
+    @PostMapping("/admin/batchDelete")
     public BaseResponse<Boolean> batchDelete(@RequestBody UserBatchDeleteRequest userBatchDeleteRequest) {
         if (userBatchDeleteRequest == null || userBatchDeleteRequest.getUserIdList() == null
                 || userBatchDeleteRequest.getUserIdList().isEmpty()) {
@@ -129,7 +128,7 @@ public class UserController {
         return ResponseUtils.success(true);
     }
 
-    @PostMapping("admin/switchStatus")
+    @PostMapping("/admin/switchStatus")
     public BaseResponse<Boolean> switchStatus(@RequestBody UserSwitchStatusRequest userSwitchStatusRequest) {
         if (userSwitchStatusRequest == null) {
             throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_NULL);
@@ -147,7 +146,7 @@ public class UserController {
         return ResponseUtils.success(result);
     }
 
-    @PostMapping("admin/batchSwitchStatus")
+    @PostMapping("/admin/batchSwitchStatus")
     public BaseResponse<Boolean> batchSwitchStatus(@RequestBody UserBatchSwitchStatusRequest userBatchSwitchStatusRequest) {
         if (userBatchSwitchStatusRequest == null) {
             throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_NULL);
@@ -160,6 +159,20 @@ public class UserController {
         if (!result) {
             throw new BusinessException(BusinessCode.SYSTEM_ERROR, "状态批量更新失败，请重试");
         }
+        return ResponseUtils.success(result);
+    }
+
+    @PostMapping("/resetPassword")
+    public BaseResponse<Boolean> resetPassword(@RequestBody UserResetPasswordRequest userResetPasswordRequest, HttpServletRequest request) {
+        if (userResetPasswordRequest == null || request == null) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_NULL);
+        }
+
+        Long userId = userResetPasswordRequest.getUserId();
+        String password = userResetPasswordRequest.getPassword();
+        String checkPassword = userResetPasswordRequest.getCheckPassword();
+
+        boolean result = userService.resetPassword(userId, password, checkPassword, request);
         return ResponseUtils.success(result);
     }
 }

@@ -78,4 +78,15 @@ public interface UserService extends IService<User> {
      * @return 更新结果
      */
     boolean batchSwitchStatus(List<Long> userIdList, Integer userStatus);
+
+    /**
+     * 重置用户密码
+     *
+     * @param userId 用户id
+     * @param password 用户密码
+     * @param checkPassword 确认密码
+     * @param request 用于获取当前用户
+     * @return 更新结果
+     */
+    boolean resetPassword(Long userId, String password, String checkPassword, HttpServletRequest request);
 }

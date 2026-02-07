@@ -103,7 +103,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         // 密码长度校验
         if (UserConstants.CHECK_USER_PASSWORD_MIN_LENGTH > userPassword.length() || userPassword.length() > UserConstants.CHECK_USER_PASSWORD_MAX_LENGTH) {
-            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_NULL, "确认密码不能为空");
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "密码不能小于6位，且不能超过16位");
         }
 
         // 验证账户
@@ -245,6 +245,54 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         boolean result = this.updateBatchById(list);
         if (!result) {
             throw new BusinessException(BusinessCode.SYSTEM_ERROR, "状态批量更新失败，请重试");
+        }
+        return result;
+    }
+
+    @Override
+    public boolean resetPassword(Long userId, String password, String checkPassword, HttpServletRequest request) {
+        if (userId == null) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "用户id不能为空");
+        }
+        if (password == null) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "新密码不能为空");
+        }
+        if (checkPassword == null) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "确认密码不能为空");
+        }
+
+        // 密码校验
+        if (UserConstants.CHECK_USER_PASSWORD_MIN_LENGTH > password.length() || password.length() > UserConstants.CHECK_USER_PASSWORD_MAX_LENGTH) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "密码不能小于6位，且不能超过16位");
+        }
+
+        // 一致校验
+        if (!password.equals(checkPassword)) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_PARAM_ERROR, "两次输入的密码不一致");
+        }
+
+        // 身份校验：仅允许用户自己或管理员操作
+        if (request == null || request.getSession() == null) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_NO_AUTH, "操作非法");
+        }
+        Object o = request.getSession().getAttribute(UserConstants.USER_LOGIN_STATE);
+        UserVO user = (UserVO) o;
+        if (user == null) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_NOT_LOGIN);
+        }
+        if (user.getUserId().equals(userId) || user.getUserRole() != UserConstants.USER_ROLE_ADMIN) {
+            throw new BusinessException(BusinessCode.BUSINESS_ERROR_NO_AUTH);
+        }
+
+        // 更新用户密码
+        // 密码盐值加密
+        String saltPassword = DigestUtils.md5DigestAsHex((UserConstants.SALT + password).getBytes());
+        User updateUser = new User();
+        updateUser.setUserId(userId);
+        updateUser.setUserPassword(saltPassword);
+        boolean result = updateById(updateUser);
+        if (!result) {
+            throw new BusinessException(BusinessCode.SYSTEM_ERROR, "更新密码失败，请稍后重试");
         }
         return result;
     }
