@@ -122,8 +122,16 @@ public class UserServiceTest {
                 user.getInvitationCode());
         Assertions.assertEquals(-1L, result);
 
-        // todo 邀请码
-
+        // 邀请码
+        user.setUserAccount("woshi");
+        user.setUserPassword("123456");
+        user.setCheckPassword("123456");
+        user.setInvitationCode("123456");
+        result = userService.register(user.getUserAccount(),
+                user.getUserPassword(),
+                user.getCheckPassword(),
+                user.getInvitationCode());
+        Assertions.assertEquals(-1L, result);
 
         // 注册成功
         user.setUserAccount("admin");

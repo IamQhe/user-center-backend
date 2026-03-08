@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qhe.usercenter.mapper.InvitationCodeMapper">
+
+    <resultMap id="BaseResultMap" type="com.qhe.usercenter.model.InvitationCode">
+            <id property="invitationId" column="invitation_id" />
+            <result property="invitationCode" column="invitation_code" />
+            <result property="invitationType" column="invitation_type" />
+            <result property="invitationStatus" column="invitation_status" />
+            <result property="expireTime" column="expire_time" />
+            <result property="creatorId" column="creator_id" />
+            <result property="updateId" column="update_id" />
+            <result property="invitationNote" column="invitation_note" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="isDelete" column="is_delete" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        invitation_id,invitation_code,invitation_type,invitation_status,
+        expire_time,creator_id,invitation_note,create_time,update_time
+    </sql>
+
+    <select id="search" resultType="com.qhe.usercenter.model.InvitationCode">
+        select <include refid="Base_Column_List"/>
+        from invitation_code
+        <where>
+            is_delete = 0
+            <if test="invitationId != null">AND invitation_id = #{invitationId} </if>
+            <if test="invitationCode != null and invitationCode != ''">AND invitation_code like concat('%', #{invitationCode}, '%') </if>
+            <if test="invitationType != null">AND invitation_type = #{invitationType} </if>
+            <if test="invitationStatus != null">AND invitation_status = #{invitationStatus} </if>
+            <if test="expireTime != null">AND expire_time &lt;= #{expireTime} </if>
+            <if test="invitationNote != null and invitationNote != ''">AND invitation_note like concat('%', #{invitationNote}, '%') </if>
+            <if test="startCreateTime != null and endCreateTime != null">AND create_time between #{startCreateTime} and #{endCreateTime}</if>
+            <if test="startUpdateTime != null and endUpdateTime != null">AND update_time between #{startUpdateTime} and #{endUpdateTime}</if>
+        </where>
+    </select>
+</mapper>

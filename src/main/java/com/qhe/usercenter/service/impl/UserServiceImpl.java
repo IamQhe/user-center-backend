@@ -10,6 +10,7 @@ import com.qhe.usercenter.model.UserVO;
 import com.qhe.usercenter.model.enums.UserStatusEnum;
 import com.qhe.usercenter.model.request.UserQueryRequest;
 import com.qhe.usercenter.model.request.UserUpdateRequest;
+import com.qhe.usercenter.service.InvitationCodeService;
 import com.qhe.usercenter.service.UserService;
 import com.qhe.usercenter.mapper.UserMapper;
 import com.qhe.usercenter.utils.ListUtils;
@@ -17,6 +18,7 @@ import com.qhe.usercenter.utils.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +33,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService{
 
     private final UserMapper userMapper;
+
+    @Resource
+    private InvitationCodeService invitationCodeService;
 
     public UserServiceImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
@@ -70,8 +75,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                     "账号已存在，再换一个吧");
         }
 
-        // todo 邀请码校验
-
+        // 邀请码校验
+        invitationCodeService.checkInvitationCode(invitationCode);
 
         // 密码盐值加密
         String saltPassword = DigestUtils.md5DigestAsHex((UserConstants.SALT + userPassword).getBytes());
@@ -242,7 +247,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             u.setUserStatus(userStatus);
             return u;
         }).collect(Collectors.toList());
-        boolean result = this.updateBatchById(list);
+        boolean result = updateBatchById(list);
         if (!result) {
             throw new BusinessException(BusinessCode.SYSTEM_ERROR, "状态批量更新失败，请重试");
         }
